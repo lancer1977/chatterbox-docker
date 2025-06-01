@@ -2,7 +2,7 @@
 FROM nvidia/cuda:12.9.0-cudnn-devel-ubuntu24.04
 
 # Install Python and dependencies
-RUN apt-get update && apt-get install -y python3-full git
+RUN apt-get update && apt-get install -y python3-full python3-pip git
 
 # Upgrade pip and install requirements from file
 COPY requirements.txt /app/requirements.txt
