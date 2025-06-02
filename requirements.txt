@@ -1,6 +1,8 @@
+chatterbox-tts
 fastapi
 uvicorn
 pydantic
 torchaudio
 torch
-chatterbox-tts
+torchvision
+torchaudio

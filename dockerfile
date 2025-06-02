@@ -1,5 +1,5 @@
 # Use CUDA 12.9 base image
-FROM nvidia/cuda:12.9.0-cudnn-devel-ubuntu24.04
+FROM nvidia/cuda:12.8.0-cudnn-devel-ubuntu24.04
 ENV CHATTERBOX_DEVICE=cuda
 RUN mkdir -p /app/audio_prompts
 # Install Python and dependencies
@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y python3-full python3-pip git
 COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 #RUN pip install --upgrade pip
-RUN pip install  --no-cache-dir --break-system-packages -r requirements.txt
+RUN pip install  --no-cache-dir --break-system-packages -r requirements.txt 
+
 
 # Copy application code and entry script
 COPY run.sh /app/run.sh

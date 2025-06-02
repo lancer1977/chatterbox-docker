@@ -1,1 +1,1 @@
-docker run --gpus all -p 80:80 -v "d:\docker\chatter\audio:/app/audio_prompts" -v "d:\docker\chatter\completed:/app/completed" -it lancer1977/chatter
+docker run --gpus all -p 80:80 -v "d:\docker\chatter\audio:/app/audio_prompts" -v "d:\docker\chatter\completed:/app/completed" -e CHATTERBOX_DEVICE=cuda -e DEBUG=true   -it lancer1977/chatter
