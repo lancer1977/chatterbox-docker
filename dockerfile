@@ -1,4 +1,6 @@
 # Use CUDA 12.9 base image
+#ARG PIP_CACHE_OPTION=--no-cache-dir
+ARG PIP_CACHE_OPTION=
 FROM nvidia/cuda:12.8.0-cudnn-devel-ubuntu24.04
 ENV CHATTERBOX_DEVICE=cuda
 RUN mkdir -p /app/audio_prompts
@@ -9,8 +11,8 @@ RUN apt-get update && apt-get install -y python3-full python3-pip git
 COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 #RUN pip install --upgrade pip
-RUN pip install  --no-cache-dir --break-system-packages -r requirements.txt 
-RUN pip install --pre --no-cache-dir --break-system-packages torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+RUN pip install $PIP_CACHE_OPTION --break-system-packages -r requirements.txt 
+RUN pip install $PIP_CACHE_OPTION --break-system-packages --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 
 # Copy application code and entry script
 COPY run.sh /app/run.sh
