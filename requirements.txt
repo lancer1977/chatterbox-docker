@@ -2,7 +2,4 @@ chatterbox-tts
 fastapi
 uvicorn
 pydantic
-torchaudio
-torch
-torchvision
-torchaudio
+peft

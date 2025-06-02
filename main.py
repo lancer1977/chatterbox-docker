@@ -25,6 +25,12 @@ class TTSRequest(BaseModel):
     speaker: str = "default"
     filename: str ="" # Desired base name without extension
 
+def getSpeakerFilePath(speaker: str) -> str:
+    speaker_file = f"{speaker}.wav"
+    speaker_path = os.path.join("/app/audio_prompts", speaker_file)
+    log_debug(f"Speaker file path: {speaker_path}")
+    return speaker_path
+
 def build_output_path(base_name: str) -> str:
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_base_name = "".join(c for c in base_name if c.isalnum() or c in (' ', '_', '-')).rstrip()
@@ -54,7 +60,11 @@ async def generate_tts_stream(request: TTSRequest):
     model = ChatterboxTTS.from_pretrained(device=DEVICE)
     log_debug("TTS model loaded.")
 
-    wav = model.generate(request.text)
+    if not request.speaker:
+        wav = model.generate(request.text)
+    else:
+        speaker_path = getSpeakerFilePath(request.speaker) 
+        wav = model.generate(request.text, audio_prompt_path=speaker_path)
     log_debug("Audio generated.")
 
     output_path = build_output_path(request.filename)
