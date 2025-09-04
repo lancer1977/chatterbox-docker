@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import torchaudio as ta
+import torch
 from chatterbox.tts import ChatterboxTTS
 import os
 from datetime import datetime
@@ -9,13 +10,21 @@ from datetime import datetime
 app = FastAPI()
 
 # Environment config
-DEVICE = os.getenv("CHATTERBOX_DEVICE", "cpu")
-OUTPUT_DIR = "/app/completed"
-DEBUG = os.getenv("DEBUG", "0").lower() in ("1", "true", "yes")
+FOLDER = os.getenv("CHATTERBOX_FOLDER", "/Users/crichmond/chatterbox")
+DEVICE = os.getenv("CHATTERBOX_DEVICE", "mps")
+OUTPUT_DIR = FOLDER + "/completed"
+DEBUG = os.getenv("DEBUG", "1").lower() in ("1", "true", "yes")
+map_location = torch.device(DEVICE)
+torch_load_original = torch.load
+
+def patched_torch_load(*args, **kwargs):
+    if 'map_location' not in kwargs:
+        kwargs['map_location'] = map_location
+    return torch_load_original(*args, **kwargs)
 
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-
+torch.load = patched_torch_load
 # Global model placeholder
 tts_model = None
 
@@ -29,15 +38,21 @@ class TTSRequest(BaseModel):
     speaker: str = "default"
     filename: str = ""  # Desired base name without extension
     exaggeration: float = .5  # Exaggeration factor for the TTS model
-    cfg_weight= float = 0.5  # Configuration weight for the TTS model
-    temperature= float = 0.8  # Temperature for the TTS model
+    cfg_weight: float = 0.5  # Configuration weight for the TTS model
+    temperature: float = 0.8  # Temperature for the TTS model
     def __str__(self):
         return f"TTSRequest(text={self.text}, speaker={self.speaker}, filename={self.filename}, exaggeration={self.exaggeration})"
-    
+
+@app.on_event("startup")
+async def load_model_once():
+    global tts_model
+    log_debug("Loading TTS model at startup:" + DEVICE)
+    tts_model = ChatterboxTTS.from_pretrained(device=DEVICE)
+    log_debug("TTS model loaded and ready.")    
 
 def getSpeakerFilePath(speaker: str) -> str:
     speaker_file = f"{speaker}.wav"
-    speaker_path = os.path.join("/app/audio_prompts", speaker_file)
+    speaker_path = os.path.join(FOLDER, "audio_prompts", speaker_file)
     log_debug(f"Speaker file path: {speaker_path}")
     return speaker_path
 
@@ -49,12 +64,7 @@ def build_output_path(base_name: str) -> str:
     log_debug(f"Output path built: {output_path}")
     return output_path
 
-@app.on_event("startup")
-async def load_model_once():
-    global tts_model
-    log_debug("Loading TTS model at startup...")
-    tts_model = ChatterboxTTS.from_pretrained(device=DEVICE)
-    log_debug("TTS model loaded and ready.")
+
 
  
 

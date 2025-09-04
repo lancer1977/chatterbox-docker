@@ -1,0 +1,2 @@
+pip install --no-cache-dir --break-system-packages -r requirements.txt 
+pip install --no-cache-dir --break-system-packages --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
