@@ -1,6 +1,15 @@
 # chatterbox-docker
 A project focused on chatterbox docker.
 
+## Tags
+
+- docker
+- chatterbox-docker
+- devops
+- docs
+- chatterbox
+- chat
+
 ## Overview
 This repository contains the chatterbox-docker project. It is designed to provide robust functionality and seamless integration within its ecosystem.
 
