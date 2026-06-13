@@ -26,6 +26,7 @@ This repository contains the chatterbox-docker project. It is designed to provid
 
 ## 📖 Documentation
 Detailed documentation can be found in the following sections:
+- [Docs Home](./docs/README.md)
 - [Feature Index](./docs/features/README.md)
 - [Core Capabilities](./docs/features/core-capabilities.md)
 
