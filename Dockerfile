@@ -12,7 +12,6 @@ COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 #RUN pip install --upgrade pip
 RUN pip install $PIP_CACHE_OPTION --break-system-packages -r requirements.txt 
-RUN pip install $PIP_CACHE_OPTION --break-system-packages --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 
 # Copy application code and entry script
 COPY run.sh /app/run.sh
