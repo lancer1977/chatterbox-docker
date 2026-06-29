@@ -1,0 +1,60 @@
+name: Build Image and Smoke Contract
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate repository contract
+        run: bash scripts/validate.sh
+
+      - name: Log in to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        run: |
+          docker build \
+            -t ghcr.io/${{ github.repository_owner }}/chatterbox-docker:${{ github.sha }} \
+            -t ghcr.io/${{ github.repository_owner }}/chatterbox-docker:latest \
+            .
+
+      - name: Record smoke command
+        run: |
+          mkdir -p artifacts
+          cat > artifacts/smoke-command.txt <<'SMOKE'
+          docker run --rm --gpus all -p 8080:80 ghcr.io/lancer1977/chatterbox-docker:${GITHUB_SHA}
+          scripts/smoke.sh http://127.0.0.1:8080
+          SMOKE
+
+      - name: Push image
+        if: github.event_name == 'push'
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/chatterbox-docker:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/chatterbox-docker:latest
+
+      - name: Upload smoke contract
+        uses: actions/upload-artifact@v4
+        with:
+          name: chatterbox-docker-smoke-contract
+          path: artifacts/smoke-command.txt
+          if-no-files-found: error

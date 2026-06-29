@@ -29,9 +29,24 @@ Detailed documentation can be found in the following sections:
 - [Docs Home](./docs/README.md)
 - [Feature Index](./docs/features/README.md)
 - [Core Capabilities](./docs/features/core-capabilities.md)
+- [Deployment runbook](./docs/deploy/README.md)
 
 ## 🚦 Getting Started
 ```bash
 pip install -r requirements.txt
 python main.py
+```
+
+## Deployment Validation
+
+Validate the repo contract before publishing:
+
+```bash
+bash scripts/validate.sh
+```
+
+After a container is running, check the FastAPI surface without generating audio:
+
+```bash
+scripts/smoke.sh http://127.0.0.1:8080
 ```

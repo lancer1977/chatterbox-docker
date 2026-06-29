@@ -17,6 +17,8 @@ required_paths=(
   "main.mac.py"
   "install.sh"
   "run.sh"
+  "scripts/smoke.sh"
+  "docs/deploy/README.md"
 )
 
 for path in "${required_paths[@]}"; do
@@ -28,6 +30,7 @@ done
 
 bash -n install.sh
 bash -n run.sh
+bash -n scripts/smoke.sh
 python3 -m py_compile main.py main.mac.py
 
 if command -v devstudio >/dev/null 2>&1; then

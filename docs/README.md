@@ -6,6 +6,7 @@ Documentation index for the Chatterbox Docker project.
 
 - [Feature Index](./features/README.md)
 - [Roadmap Index](./roadmaps/README.md)
+- [Deployment runbook](./deploy/README.md)
 
 ## Current State
 
