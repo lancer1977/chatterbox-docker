@@ -28,9 +28,30 @@ This repository contains the chatterbox-docker project. It is designed to provid
 Detailed documentation can be found in the following sections:
 - [Feature Index](./docs/features/README.md)
 - [Core Capabilities](./docs/features/core-capabilities.md)
+- [Deployment Runbook](./docs/deployment.md)
 
 ## 🚦 Getting Started
 ```bash
 pip install -r requirements.txt
 python main.py
+```
+
+## Validation
+
+CI and the release gate use the smoke probe:
+
+```bash
+bash scripts/smoke.sh
+```
+
+For a lighter source-only check:
+
+```bash
+bash scripts/validate.sh
+```
+
+After a rollout, run the repo smoke probe:
+
+```bash
+bash scripts/smoke.sh
 ```

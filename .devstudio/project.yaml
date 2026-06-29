@@ -1,12 +1,21 @@
-name: change-me
-repo_root: change-me
+name: chatterbox-docker
+repo_root: /mnt/data/lancer1977/code/chatterbox-docker
 
-languages: []
-frameworks: []
+languages:
+  - python
+  - shell
+  - dockerfile
+  - markdown
+frameworks:
+  - docker
+  - cuda
+  - python
 
 ci:
-  build: []
-  test: []
+  build:
+    - bash scripts/validate.sh
+  test:
+    - bash scripts/validate.sh
 
 devstudio:
   runtime_model: three-agent

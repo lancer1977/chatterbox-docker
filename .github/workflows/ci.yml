@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run repo smoke probe
+        run: |
+          mkdir -p artifacts
+          bash scripts/smoke.sh 2>&1 | tee artifacts/validation.log
+
+      - name: Upload validation artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chatterbox-docker-validation
+          path: artifacts/validation.log
+          if-no-files-found: error

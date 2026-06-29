@@ -1,22 +1,32 @@
-# Script Template: .NET Coverage
+# Chatterbox Docker Scripts
 
-This folder captures a reusable shell-script baseline for .NET coverage workflows.
+This folder contains repo-local validation helpers used by local operators and
+GitHub Actions.
 
-Copy the script into a product repo when you want a simple local command that:
+## Validation
 
-- runs the target test project or solution
-- collects `XPlat Code Coverage`
-- writes artifacts to a predictable `TestResults/` location
-- optionally generates a human-readable HTML report when ReportGenerator is available
+Run the same smoke probe used by CI:
 
-## Expected inputs
+```bash
+bash scripts/smoke.sh
+```
 
-- `COVERAGE_TARGET` or the first positional argument: the solution or test project path
-- `CONFIGURATION` (optional): defaults to `Release`
-- `COVERAGE_RESULTS_DIR` (optional): defaults to `./TestResults/coverage`
+Run the repo smoke probe after a rollout:
+
+```bash
+bash scripts/smoke.sh
+```
+
+The smoke probe calls `scripts/validate.sh` first, then checks the local
+compose definition when Docker is available.
+
+The workflow uploads `artifacts/validation.log` as the
+`chatterbox-docker-validation` GitHub Actions artifact on every run, including
+failures. No repository secrets are required for this validation-only artifact
+path.
 
 ## Notes
 
-- The script is intentionally lightweight so repos can copy it and adapt the target path.
-- If ReportGenerator is installed, the script will emit an HTML summary under the report directory.
-- Repos with more advanced needs can wrap this command in CI or a repo-local task file.
+- The current artifact home is GitHub Actions workflow artifacts.
+- GHCR image publishing should be added only after the image name, tag policy,
+  and runtime smoke gate are documented.
