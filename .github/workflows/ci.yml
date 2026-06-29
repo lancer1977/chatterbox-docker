@@ -19,6 +19,9 @@ jobs:
           mkdir -p artifacts
           bash scripts/validate.sh 2>&1 | tee artifacts/validation.log
 
+      - name: Smoke Chatterbox container
+        run: bash scripts/smoke-container.sh
+
       - name: Upload validation artifact
         uses: actions/upload-artifact@v4
         if: always()

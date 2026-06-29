@@ -12,6 +12,7 @@ app = FastAPI()
 DEVICE = os.getenv("CHATTERBOX_DEVICE", "cpu")
 OUTPUT_DIR = "/app/completed"
 DEBUG = os.getenv("DEBUG", "0").lower() in ("1", "true", "yes")
+SKIP_MODEL_LOAD = os.getenv("CHATTERBOX_SKIP_MODEL_LOAD", "0").lower() in ("1", "true", "yes")
 
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -29,8 +30,8 @@ class TTSRequest(BaseModel):
     speaker: str = "default"
     filename: str = ""  # Desired base name without extension
     exaggeration: float = .5  # Exaggeration factor for the TTS model
-    cfg_weight= float = 0.5  # Configuration weight for the TTS model
-    temperature= float = 0.8  # Temperature for the TTS model
+    cfg_weight: float = 0.5  # Configuration weight for the TTS model
+    temperature: float = 0.8  # Temperature for the TTS model
     def __str__(self):
         return f"TTSRequest(text={self.text}, speaker={self.speaker}, filename={self.filename}, exaggeration={self.exaggeration})"
     
@@ -52,11 +53,23 @@ def build_output_path(base_name: str) -> str:
 @app.on_event("startup")
 async def load_model_once():
     global tts_model
+    if SKIP_MODEL_LOAD:
+        log_debug("Skipping TTS model load because CHATTERBOX_SKIP_MODEL_LOAD is enabled.")
+        return
+
     log_debug("Loading TTS model at startup...")
     tts_model = ChatterboxTTS.from_pretrained(device=DEVICE)
     log_debug("TTS model loaded and ready.")
 
- 
+@app.get("/healthz")
+async def healthz():
+    return {
+        "status": "ok",
+        "device": DEVICE,
+        "modelLoaded": tts_model is not None,
+        "modelLoadSkipped": SKIP_MODEL_LOAD,
+        "outputDir": OUTPUT_DIR,
+    }
 
 @app.post("/tts")
 async def generate_tts_stream(request: TTSRequest):
@@ -64,7 +77,8 @@ async def generate_tts_stream(request: TTSRequest):
     if not request.text.strip():
         return {"error": "Text for TTS cannot be empty."}
 
-
+    if tts_model is None:
+        return {"error": "TTS model is not loaded."}
 
     if not request.speaker:
         wav = tts_model.generate(request.text)

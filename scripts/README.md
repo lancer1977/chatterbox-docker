@@ -21,3 +21,14 @@ path.
 - The current artifact home is GitHub Actions workflow artifacts.
 - GHCR image publishing should be added only after the image name, tag policy,
   and runtime smoke gate are documented.
+
+## Container smoke
+
+Build and smoke the HTTP runtime without loading the TTS model:
+
+```bash
+bash scripts/smoke-container.sh
+```
+
+This verifies `GET /healthz` against the built image. Full promotion should also
+exercise `POST /tts` on the GPU host with a known speaker prompt.
