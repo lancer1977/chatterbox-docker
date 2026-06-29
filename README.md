@@ -35,3 +35,8 @@ Detailed documentation can be found in the following sections:
 pip install -r requirements.txt
 python main.py
 ```
+
+## Release
+
+The release and deploy runbook lives in [deploy/README.md](./deploy/README.md).
+Use `bash scripts/smoke.sh` to verify a built image before promotion.

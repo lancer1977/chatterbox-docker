@@ -21,3 +21,5 @@ path.
 - The current artifact home is GitHub Actions workflow artifacts.
 - GHCR image publishing should be added only after the image name, tag policy,
   and runtime smoke gate are documented.
+- `scripts/smoke.sh` is the repo-local runtime probe used by the release
+  workflow and deployment runbook.
