@@ -1,0 +1,24 @@
+name: chatterbox-docker
+repo_root: /mnt/data/lancer1977/code/chatterbox-docker
+
+languages:
+  - python
+  - shell
+  - dockerfile
+  - markdown
+frameworks:
+  - docker
+  - cuda
+  - python
+
+ci:
+  build:
+    - bash scripts/validate.sh
+  test:
+    - bash scripts/validate.sh
+
+devstudio:
+  runtime_model: three-agent
+  backlog_ordering: filename
+  skip_promoted_planning: true
+  one_stage_per_run: true
